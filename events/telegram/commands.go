@@ -21,11 +21,6 @@ func (ep EventProcessor) doCmd(text string, chatId int, username string) error {
 
 	log.Printf("Got new command '%s' from %s", text, username)
 
-	//add page: http://
-	//random page: /rnd
-	//help: /help
-	//start: /start
-
 	if isAddCmd(text) {
 		return ep.savePage(chatId, text, username)
 	}

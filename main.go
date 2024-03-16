@@ -2,25 +2,31 @@ package main
 
 import (
 	"flag"
-	"log/slog"
-	"memolink-bot/clients/telegram"
-	"os"
+	"log"
+	tgClient "memolink-bot/clients/telegram"
+	event_consumer "memolink-bot/consumer/event-consumer"
+	telegram "memolink-bot/events/telegram"
+	"memolink-bot/storage/files"
 )
 
 const (
-	tgBotHost = "api.telegram.org"
+	tgBotHost   = "api.telegram.org"
+	storagePath = "files_storage"
+	batchSize   = 100
 )
 
 func main() {
-	log := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelDebug}))
+	eventsProcessor := telegram.New(
+		tgClient.New(tgBotHost, mustToken()),
+		files.New(storagePath),
+	)
 
-	tgClient := telegram.New(tgBotHost, mustToken())
+	log.Print("service started")
 
-	//fetcher := fetcher.New(tgClient)
-
-	//processor := processor.New(tgClient)
-
-	//consumer.Start(fetcher, processor)
+	consumer := event_consumer.New(eventsProcessor, eventsProcessor, batchSize)
+	if err := consumer.Start(); err != nil {
+		log.Fatal("service is stopped")
+	}
 }
 
 func mustToken() string {

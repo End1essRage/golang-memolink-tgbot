@@ -21,8 +21,8 @@ const (
 	sendMessageMethod = "sendMessage"
 )
 
-func New(host, token string) Client {
-	return Client{
+func New(host, token string) *Client {
+	return &Client{
 		host:     host,
 		basePath: newBasePath(token),
 		client:   http.Client{},
@@ -89,7 +89,7 @@ func (c *Client) doRequest(method string, query url.Values) ([]byte, error) {
 
 	defer func() { _ = resp.Body.Close() }()
 
-	body, err := io.ReadAll(req.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, fmt.Errorf("can't read response: %w", err)
 	}

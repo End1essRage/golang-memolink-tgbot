@@ -51,6 +51,8 @@ func (s Storage) Save(page *storage.Page) error {
 func (s Storage) PickRandom(userName string) (*storage.Page, error) {
 	path := filepath.Join(s.basePath, userName)
 
+	//Проверить существование папки под пользователя
+
 	files, err := os.ReadDir(path)
 	if err != nil {
 		return nil, fmt.Errorf("cant read from directory: %w", err)
